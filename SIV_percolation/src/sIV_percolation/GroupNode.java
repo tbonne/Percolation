@@ -24,6 +24,7 @@ public class GroupNode {
 	Coordinate coord;
 	private ContinuousSpace <Object > groupSpace; 
 	private Network<GroupNode> myNet;
+	double probBirth;
 
 
 	public GroupNode(ContinuousSpace <Object > space,Network <GroupNode> net,int i, Coordinate coordinate) {
@@ -32,14 +33,21 @@ public class GroupNode {
 		coord = coordinate;
 		this.groupSpace=space;
 		this.myNet=net;
+		probBirth=0;
 	}
 
-	public void step(){
+	public void step(){ 
 
 		status=0;
+		
 		for(IndividualNode nn : myIndividuals){
 			if(nn.getStatus()==1)status++;
 		}
+		size=myIndividuals.size();
+		
+		
+		//probBirth = 1/(1+9*Math.exp(-1*(Params.groupSize_optimal-this.size)*0.1)); //at optimal group size the birth rate is 0.1
+		probBirth = 1/(1+Math.exp(-1*(Params.groupSize_optimal-this.size)/10)); 
 	}
 
 
@@ -48,9 +56,11 @@ public class GroupNode {
 
 
 
-
 	/*****************************************get/set methods**************************************************/
-
+	
+	public double getProbBirth(){
+		return probBirth;
+	}
 	public int getID(){
 		return id;
 	}
@@ -68,5 +78,8 @@ public class GroupNode {
 	}
 	public int getGroupSize(){
 		return size;
+	}
+	public double getPrev(){
+		return (double)status/(double)size;
 	}
 }

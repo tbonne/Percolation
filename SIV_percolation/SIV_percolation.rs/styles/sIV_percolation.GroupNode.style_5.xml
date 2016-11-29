@@ -3,8 +3,10 @@
   <size>150.0</size>
   <sizeMax>15.0</sizeMax>
   <sizeMin>1.0</sizeMin>
-  <sizeScale>1.0</sizeScale>
+  <sizeScale>150.0</sizeScale>
+  <sizeMethodName>getGroupSize</sizeMethodName>
   <label></label>
+  <labelMethod>getGroupSize</labelMethod>
   <labelPosition>bottom</labelPosition>
   <labelPrecision>3</labelPrecision>
   <labelOffset>5.0</labelOffset>
@@ -21,9 +23,9 @@
     <float>0.0</float>
     <float>1.0</float>
   </color>
-  <redMethodName>getGroupStatus</redMethodName>
+  <redMethodName>getPrev</redMethodName>
   <colorMax>
-    <float>10.0</float>
+    <float>1.0</float>
     <float>10.0</float>
     <float>10.0</float>
   </colorMax>

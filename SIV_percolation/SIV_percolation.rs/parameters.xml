@@ -11,7 +11,7 @@
 		/>
 		
 		<parameter name="groupSize" displayName="2. Size of groups" type="int" 
-						defaultValue="15" 
+						defaultValue="50" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									

@@ -124,3 +124,231 @@ Caused by: java.lang.NullPointerException
 	at sIV_percolation.Observer.record_prop(Observer.java:48)
 	at sIV_percolation.Observer.step(Observer.java:36)
 	... 9 more
+FATAL [Thread-8] 2016-11-17 13:08:37,608 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (4.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Executor$$FastClassByCGLIB$$9fef33ce.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: repast.simphony.space.SpatialException: Target location 1001.0326368769165 is outside of grid's dimensions.
+	at repast.simphony.space.continuous.AbstractPointTranslator.boundsCheck(AbstractPointTranslator.java:49)
+	at repast.simphony.space.continuous.AbstractPointTranslator.transform(AbstractPointTranslator.java:39)
+	at repast.simphony.space.continuous.AbstractContinuousSpace.doMove(AbstractContinuousSpace.java:144)
+	at repast.simphony.space.continuous.AbstractContinuousSpace.moveTo(AbstractContinuousSpace.java:121)
+	at sIV_percolation.ModelSetup.addNewIndividual(ModelSetup.java:433)
+	at sIV_percolation.ModelSetup.processNewIndividuals(ModelSetup.java:463)
+	at sIV_percolation.ModelSetup.performMigration(ModelSetup.java:370)
+	at sIV_percolation.Executor.processMigration(Executor.java:63)
+	... 9 more
+FATAL [Thread-9] 2016-11-17 13:09:33,852 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (1.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Executor$$FastClassByCGLIB$$9fef33ce.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.NullPointerException
+	at sIV_percolation.ModelSetup.addNewIndividual(ModelSetup.java:425)
+	at sIV_percolation.ModelSetup.processNewIndividuals(ModelSetup.java:463)
+	at sIV_percolation.ModelSetup.performMigration(ModelSetup.java:370)
+	at sIV_percolation.Executor.processMigration(Executor.java:63)
+	... 9 more
+FATAL [Thread-8] 2016-11-22 14:13:32,196 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (26637.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Executor$$FastClassByCGLIB$$9fef33ce.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.IndexOutOfBoundsException: Index: 1, Size: 1
+	at java.util.ArrayList.rangeCheck(ArrayList.java:638)
+	at java.util.ArrayList.get(ArrayList.java:414)
+	at sIV_percolation.ModelSetup.performMigration(ModelSetup.java:355)
+	at sIV_percolation.Executor.processMigration(Executor.java:69)
+	... 9 more
+FATAL [Thread-7] 2016-11-24 16:06:30,915 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (100.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Observer$$FastClassByCGLIB$$3af08dd1.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.ArrayIndexOutOfBoundsException: 100
+	at sIV_percolation.Observer.recordGroupInfections(Observer.java:137)
+	at sIV_percolation.Observer.step(Observer.java:47)
+	... 9 more
+FATAL [Thread-7] 2016-11-24 16:14:38,636 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (100.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Observer$$FastClassByCGLIB$$3af08dd1.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.ArrayIndexOutOfBoundsException: 100
+	at sIV_percolation.Observer.recordGroupInfections(Observer.java:137)
+	at sIV_percolation.Observer.step(Observer.java:47)
+	... 9 more
+FATAL [Thread-7] 2016-11-24 16:16:22,302 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (101.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Observer$$FastClassByCGLIB$$3af08dd1.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.ArrayIndexOutOfBoundsException: 101
+	at sIV_percolation.Observer.recordGroupInfections(Observer.java:137)
+	at sIV_percolation.Observer.step(Observer.java:47)
+	... 9 more
+FATAL [Thread-7] 2016-11-24 16:23:45,234 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (4.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Executor$$FastClassByCGLIB$$9fef33ce.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.NullPointerException
+	at sIV_percolation.ModelSetup.transmissionStep(ModelSetup.java:315)
+	at sIV_percolation.ModelSetup.performMigration(ModelSetup.java:371)
+	at sIV_percolation.Executor.processMigration(Executor.java:69)
+	... 9 more
+FATAL [Thread-7] 2016-11-24 16:24:45,003 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (101.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Observer$$FastClassByCGLIB$$3af08dd1.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.ArrayIndexOutOfBoundsException: 100
+	at sIV_percolation.Observer.recordGroupInfections(Observer.java:139)
+	at sIV_percolation.Observer.step(Observer.java:48)
+	... 9 more
+FATAL [Thread-7] 2016-11-24 16:25:46,973 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (102.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Observer$$FastClassByCGLIB$$3af08dd1.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.ArrayIndexOutOfBoundsException: 101
+	at sIV_percolation.Observer.recordGroupInfections(Observer.java:139)
+	at sIV_percolation.Observer.step(Observer.java:48)
+	... 9 more
+FATAL [Thread-7] 2016-11-28 11:03:39,713 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (4474.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Executor$$FastClassByCGLIB$$9fef33ce.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: org.apache.commons.math3.exception.NotStrictlyPositiveException: scale (0)
+	at org.apache.commons.math3.distribution.GammaDistribution.<init>(GammaDistribution.java:138)
+	at org.apache.commons.math3.distribution.GammaDistribution.<init>(GammaDistribution.java:111)
+	at org.apache.commons.math3.distribution.GammaDistribution.<init>(GammaDistribution.java:93)
+	at sIV_percolation.PIV_infection.<init>(PIV_infection.java:29)
+	at sIV_percolation.IndividualNode.infect(IndividualNode.java:120)
+	at sIV_percolation.ModelSetup.transmissionStep(ModelSetup.java:315)
+	at sIV_percolation.ModelSetup.performMigration(ModelSetup.java:371)
+	at sIV_percolation.Executor.processMigration(Executor.java:69)
+	... 9 more
+FATAL [Thread-7] 2016-11-29 15:16:24,965 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (119.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sIV_percolation.Executor$$FastClassByCGLIB$$9fef33ce.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127)
+	... 6 more
+Caused by: java.lang.NullPointerException
+	at sIV_percolation.ModelSetup.removeEdges(ModelSetup.java:407)
+	at sIV_percolation.ModelSetup.processMigrations(ModelSetup.java:361)
+	at sIV_percolation.ModelSetup.stepModel(ModelSetup.java:292)
+	at sIV_percolation.Executor.processModel(Executor.java:68)
+	... 9 more

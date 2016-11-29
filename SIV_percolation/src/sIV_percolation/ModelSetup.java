@@ -39,10 +39,9 @@ public class ModelSetup implements ContextBuilder<Object>{
 	public static ArrayList<GroupEdge> allEdges;
 	public static ArrayList<IndividualNode> infectIndividuals;
 	public static ArrayList<IndividualNode> migratingIndividuals;
-	static ContinuousSpace <Object > individualSpace;
+	static ContinuousSpace <Object > groupSpace;
 	static Network<IndividualNode> iNet;
 	static Network<GroupNode> gNet;
-
 	private static int numGroups ;
 	private static int landSize ;
 	public static ArrayList<IndividualNode> individualsToRemove;
@@ -75,8 +74,7 @@ public class ModelSetup implements ContextBuilder<Object>{
 		System.out.println("Building landscape");
 
 		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
-		//ContinuousSpace <Object > groupSpace 		= spaceFactory.createContinuousSpace("groupSpace", context , new RandomCartesianAdder <Object >(), new repast.simphony.space.continuous.StrictBorders(), landSize, landSize);
-		individualSpace 	= spaceFactory.createContinuousSpace("individualSpace", context , new RandomCartesianAdder <Object >(), new repast.simphony.space.continuous.StrictBorders(), landSize, landSize);
+		groupSpace 	= spaceFactory.createContinuousSpace("individualSpace", context , new RandomCartesianAdder <Object >(), new repast.simphony.space.continuous.StrictBorders(), landSize, landSize);
 
 		NetworkBuilder <Object > netBuilder1 = new NetworkBuilder <Object > ("groupNetwork", context , true); 
 		netBuilder1.buildNetwork();
@@ -95,15 +93,14 @@ public class ModelSetup implements ContextBuilder<Object>{
 		System.out.println("--adding group nodes");
 
 		//groups: random structure
-
 		for (int j = 0; j < numGroups; j++){
 
 			//add node
 			Coordinate coord = new Coordinate(RandomHelper.nextDoubleFromTo((0),(landSize)), RandomHelper.nextDoubleFromTo(0,(landSize)));
-			GroupNode gNode = new GroupNode(individualSpace,gNet,j,coord);
+			GroupNode gNode = new GroupNode(groupSpace,gNet,j,coord);
 			allGroups.add(gNode);
 			context.add(gNode);
-			individualSpace.moveTo(gNode, coord.x,coord.y);
+			groupSpace.moveTo(gNode, coord.x,coord.y);
 		}
 
 		//groups: grid structure
@@ -125,10 +122,6 @@ public class ModelSetup implements ContextBuilder<Object>{
 		//landscape graph theory (connectivity measures)
 
 
-
-
-
-
 		/********************************************
 		 * 				        			        *
 		 * Adding Individual Nodes to the landscape	*
@@ -141,16 +134,11 @@ public class ModelSetup implements ContextBuilder<Object>{
 		int idCount=0;
 		for (GroupNode gn : allGroups){
 
-			for(int k =0;k<Params.groupSize;k++){
-				//add individuals
-				Coordinate coord = new Coordinate(Params.landscapeSize+1,Params.landscapeSize+1); 
-				while(Math.abs(coord.x)>Params.landscapeSize || Math.abs(coord.y)>Params.landscapeSize || coord.x<0 || coord.y<0){
-					coord = new Coordinate(gn.coord.x+(RandomHelper.nextDouble()-0.5)*5,gn.coord.y+(RandomHelper.nextDouble()-0.5)*5);
-				}
-				IndividualNode newInd = new IndividualNode(individualSpace,iNet,gn);
+			for(int k =0;k<Params.groupSize_start;k++){
+				IndividualNode newInd = new IndividualNode(iNet,gn);
 				gn.getIndividualNodes().add(newInd);
 				context.add(newInd);
-				individualSpace.moveTo(newInd, coord.x,coord.y);
+				//individualSpace.moveTo(newInd, coord.x,coord.y);
 				allIndividuals.add(newInd);
 			}
 
@@ -158,13 +146,17 @@ public class ModelSetup implements ContextBuilder<Object>{
 			gn.setGroupSize(gn.getIndividualNodes().size());
 
 			//infection initialization
+			int count = 0;
 			if(gn.getID()==0){
 				for(IndividualNode nn : gn.getIndividualNodes()){
-					nn.iStatus=1;
+					if(count<Params.initialInfectionSize){
+						nn.infect(Params.rate_start, Params.shape_start, Params.alpha_start);
+					} else {
+						break;
+					}
+					count++;
 				}
-				//gn.getIndividualNodes().get(0).iStatus=1;
 			}
-
 		}
 
 		/************************************
@@ -232,7 +224,7 @@ public class ModelSetup implements ContextBuilder<Object>{
 		 * 							        *
 		 * *********************************/
 
-		
+
 		//observer takes care of recoridng information from the simulation
 		Observer obs = new Observer();
 
@@ -252,35 +244,104 @@ public class ModelSetup implements ContextBuilder<Object>{
 		ScheduleParameters agentStepParams_Nodes = ScheduleParameters.createRepeating(1, 1, 6); //start, interval, priority (high number = higher priority)
 		schedule.schedule(agentStepParams_Nodes,executor,"processNodes");
 
-		ScheduleParameters agentStepParams_Infection = ScheduleParameters.createRepeating(1, 1, 5); //start, interval, priority (high number = higher priority)
-		schedule.schedule(agentStepParams_Infection,executor,"spreadInfection");
+		//ScheduleParameters agentStepParams_Infection = ScheduleParameters.createRepeating(1, 1, 5); //start, interval, priority (high number = higher priority)
+		//schedule.schedule(agentStepParams_Infection,executor,"spreadInfection");
 
-		ScheduleParameters agentStepParams_Migration = ScheduleParameters.createRepeating(1, 1, 4); //start, interval, priority (high number = higher priority)
-		schedule.schedule(agentStepParams_Migration,executor,"processMigration");
-		
+		ScheduleParameters agentStepParams_Model = ScheduleParameters.createRepeating(1, 1, 4); //start, interval, priority (high number = higher priority)
+		schedule.schedule(agentStepParams_Model,executor,"processModel");
+
 		ScheduleParameters observer_recording = ScheduleParameters.createRepeating(1, 1, 3); //start, interval, priority (high number = higher priority)
 		schedule.schedule(observer_recording,obs,"step");
-		
+
 		ScheduleParameters stop = ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY);
 		schedule.schedule(stop, obs, "output");
 
 	}
 
-	public synchronized static void addInfected(IndividualNode n){
-		infectIndividuals.add(n);
+
+	/************************************************************************/
+	/**************** get and set methods ***********************************/
+	/************************************************************************/
+
+	public static ArrayList<IndividualNode> getAllIndividuals(){
+		return allIndividuals;
 	}
-	public static void spreadInfection(){
-		for(IndividualNode n:infectIndividuals){
-			n.iStatus=1;
+
+	public static ArrayList<GroupNode> getAllGroups(){
+		return allGroups;
+	}
+
+	public static Network getGroupNet(){
+		return gNet;
+	}
+
+
+	/************************************************************************/
+	/************************* flow of the model  ***************************/
+	/************************************************************************/
+
+	public static void stepModel() {
+
+		//process transmission
+		transmissionStep(); 
+
+		//process migrations
+		processMigrations();
+
+		//process deaths
+		removeIndividuals(); 
+
+		//process new individuals
+		processNewIndividuals();
+
+		//process group nodes for visualization and birth rates
+		for(GroupNode gn:allGroups){
+			gn.step();
 		}
-		infectIndividuals.clear();
 	}
+
+
+	/************************************************************************/
+	/**************** Spread infection in the model  ***********************/
+	/************************************************************************/
+
+	private static void transmissionStep(){
+
+		//get all edges between individuals
+		Iterable<RepastEdge<IndividualNode>> listOfEdges = iNet.getEdges();
+
+		//for each edge determine if transmission occurs
+		for(RepastEdge<IndividualNode> ie : listOfEdges){
+			IndividualNode source = ie.getSource();
+			IndividualNode target = ie.getTarget();
+			int inf = source.getStatus()+target.getStatus();
+			if(inf==1){
+
+				if(source.getStatus()==1){
+					double pTrans = source.PIV.getTransProb(); 
+					if(RandomHelper.nextDouble()<pTrans){
+						target.infect(source.PIV.getRate(), source.PIV.getShape(), source.PIV.getAlpha());
+					}
+				} else {
+					double pTrans = target.PIV.getTransProb(); 
+					if(RandomHelper.nextDouble()<pTrans){
+						source.infect(target.PIV.getRate(), target.PIV.getShape(),target.PIV.getAlpha());
+					}
+				}
+			}
+		}
+	}
+
+
+	/************************************************************************/
+	/**************** Control migration in the model ***********************/
+	/************************************************************************/
 
 	public synchronized static void addMigratingInd(IndividualNode ind){
 		migratingIndividuals.add(ind);
 	}
 
-	public static void performMigration() {
+	private static void processMigrations(){
 
 		//process migrations
 		for(IndividualNode n:migratingIndividuals){
@@ -298,42 +359,46 @@ public class ModelSetup implements ContextBuilder<Object>{
 				//perform move (SEVER AND CREAT NEW NETWORK ASSOCIATIONS)
 				//sever old connections
 				removeEdges(n); 
+
 				//move physically to new group
 				n.getMyGroup().myIndividuals.remove(n);
 				n.setMyGroup(newGroup);
 				newGroup.myIndividuals.add(n);
-				Coordinate coord = new Coordinate(Params.landscapeSize+1,Params.landscapeSize+1); 
-				while(Math.abs(coord.x)>Params.landscapeSize || Math.abs(coord.y)>Params.landscapeSize || coord.x<0 || coord.y<0){
-					coord = new Coordinate(newGroup.coord.x+(RandomHelper.nextDouble()-0.5)*5,newGroup.coord.y+(RandomHelper.nextDouble()-0.5)*5);
-				}
-				individualSpace.moveTo(n, coord.x,coord.y);
 
 				//create new associations
 				Collections.shuffle(newGroup.myIndividuals);
 				for (int i =0;i<Params.individualEdges;i++){
-					IndividualNode target = newGroup.myIndividuals.get(i);
-					connectTwoIndividuals(n,target);
+					try{
+						IndividualNode target = newGroup.myIndividuals.get(i);
+						connectTwoIndividuals(n,target);
+					}catch(IndexOutOfBoundsException ee){
+						break;
+					}
 				}
 			}
 		}
-
 		migratingIndividuals.clear();
+	}
 
-		//process transmission
-		transmissionStep(); 
 
-		//process deaths
-		removeIndividuals();
+	/************************************************************************/
+	/**************** Control population in the model ***********************/
+	/************************************************************************/
 
-		//process new individuals
-		processNewIndividuals();
+	//removal of individual nodes
+	public static synchronized ArrayList<IndividualNode> getIndividualsToRemove() {
+		return individualsToRemove;
+	}
 
-		//process group nodes for visualization
-		for(GroupNode gn:allGroups){
-			gn.step();
+	private static void removeIndividuals(){
+
+		for(IndividualNode nn : individualsToRemove){
+			removeEdges(nn);
+			nn.myGroup.getIndividualNodes().remove(nn);
+			mainContext.remove(nn);
+			allIndividuals.remove(nn);
 		}
-		//}
-
+		individualsToRemove.clear();
 	}
 
 	private static void removeEdges(IndividualNode n){
@@ -344,77 +409,26 @@ public class ModelSetup implements ContextBuilder<Object>{
 		}
 		for(RepastEdge<IndividualNode> ie : al){
 			iNet.removeEdge(ie);
-			//mainContext.remove(ie);
+			mainContext.remove(ie);
 		}
 
 	}
 
-	private static void connectTwoIndividuals(IndividualNode startN, IndividualNode endN){
-		IndividualEdge edge = new IndividualEdge(startN,endN,false,1);
-		mainContext.add(edge);
-		iNet.addEdge(edge);
-	}
+	//adding individual nodes
+	public static void processNewIndividuals() {
 
-	public static ArrayList<IndividualNode> getAllIndividuals(){
-		return allIndividuals;
-	}
-	
-	public static ArrayList<GroupNode> getAllGroups(){
-		return allGroups;
-	}
-
-	public static Network getGroupNet(){
-		return gNet;
-	}
-
-	public static ArrayList<IndividualNode> getIndividualsToRemove() {
-		return individualsToRemove;
-	}
-
-	private static void removeIndividuals(){
-
-		for(IndividualNode nn : individualsToRemove){
-			//removeEdges(nn);
-			nn.myGroup.getIndividualNodes().remove(nn);
-			mainContext.remove(nn);
-			allIndividuals.remove(nn);
+		for(IndividualNode nn : individualsToAdd){
+			addNewIndividual(nn);
 		}
+		individualsToAdd.clear();
 
-		individualsToRemove.clear();
 	}
-	private static void transmissionStep(){
-
-		//transmission
-		//find all associates
-		Iterable<RepastEdge<IndividualNode>> listOfEdges = iNet.getEdges();
-
-		for(RepastEdge<IndividualNode> ie : listOfEdges){
-			IndividualNode source = ie.getSource();
-			IndividualNode target = ie.getTarget();
-			int inf = source.getStatus()+target.getStatus();
-			if(inf==1){
-				if(RandomHelper.nextDouble()<=Params.pTrans+0){
-					if(target.getStatus()==0)ModelSetup.addInfected(target);
-					if(source.getStatus()==0)ModelSetup.addInfected(source);
-				}
-			}
-		}
-	}
-
 
 	public static void addNewIndividual(IndividualNode newInd) {
 
 		//create new individual
 		newInd.myGroup.getIndividualNodes().add(newInd);
 		mainContext.add(newInd);
-
-		Coordinate coord = new Coordinate(Params.landscapeSize+1,Params.landscapeSize+1); 
-		while(Math.abs(coord.x)>Params.landscapeSize || Math.abs(coord.y)>Params.landscapeSize || coord.x<0 || coord.y<0){
-			coord = new Coordinate(newInd.myGroup.coord.x+(RandomHelper.nextDouble()-0.5)*5,newInd.myGroup.coord.y+(RandomHelper.nextDouble()-0.5)*5);
-		}
-
-		individualSpace.moveTo(newInd, coord.x,coord.y);
-
 		allIndividuals.add(newInd);
 
 		//create new associations
@@ -426,27 +440,20 @@ public class ModelSetup implements ContextBuilder<Object>{
 			} catch(IndexOutOfBoundsException ee){
 				break;
 			}
-			//double d = target.getCoord().distance(newInd.getCoord());
-			//if(d>100){
-			//	System.out.println("what?");
-			//}else{
+		}
+	}
 
-			//}
+	private static void connectTwoIndividuals(IndividualNode startN, IndividualNode endN){
+		if(startN.equals(endN)==false){
+			IndividualEdge edge = new IndividualEdge(startN,endN,false,1);
+			mainContext.add(edge);
+			iNet.addEdge(edge);
 		}
 	}
 
 
-	public static ArrayList<IndividualNode> getIndividualsToAdd() {
+	public static synchronized ArrayList<IndividualNode> getIndividualsToAdd() {
 		return individualsToAdd;
-	}
-
-	public static void processNewIndividuals() {
-
-		for(IndividualNode nn : individualsToAdd){
-			addNewIndividual(nn);
-		}
-		individualsToAdd.clear();
-
 	}
 
 }

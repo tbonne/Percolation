@@ -29,9 +29,14 @@ public class Executor {
 		executor = Executors.newFixedThreadPool(pThreads);
 	}
 
-	//synchronous scheduling
 	public static void processNodes(){
-
+		
+		//asynchronous
+		//for (IndividualNode n:ModelSetup.getAllIndividuals()){
+		//	n.step();
+		//}
+		
+		//synchronous scheduling
 		Collection<Callable<Void>> tasks_inputs = new ArrayList<Callable<Void>>();
 		for (IndividualNode n:ModelSetup.getAllIndividuals()){
 			Runnable worker = new Runnable_Node(n);
@@ -52,15 +57,15 @@ public class Executor {
 	}
 	
 	
-	public static void spreadInfection(){
+	//public static void spreadInfection(){
 		
-		ModelSetup.spreadInfection();
+	//	ModelSetup.spreadInfection();
 		
-	}
+	//}
 	
-	public static void processMigration(){
+	public static void processModel(){
 		
-		ModelSetup.performMigration();
+		ModelSetup.stepModel();
 		
 	}
 

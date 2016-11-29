@@ -8,9 +8,8 @@ import repast.simphony.parameter.Parameters;
 public class Params {
 	
 	//To do:
-	//assumptions: birth stable for non infected pop, migration allowed to vary, generation of variation in population density in space.
-	//Framework from sienna structures for the demographics model
-	//develop visual representation of spread
+		//develop flow chart of the model + refine flow
+		//clear up the two model analyses
 	
 	//Set assumpitons:
 		//assuming asymetric network ties: individuals can be connected to someone and the individual not be connected back (could change)
@@ -21,40 +20,58 @@ public class Params {
 	//List of parameters to set for each run
 	final static Parameters p = RunEnvironment.getInstance().getParameters();
 
+	
 	//system
 	public static int numThreads = 1;
 	public static int endTime = 20000;
+	public static int recordingDelta = 100;
+	
 	
 	//landscape
 	public static int landscapeSize = 100;
 	
+	
 	//Group nodes
 	public static int numberOfGroups = 50;
 	public static int maxRadiusOfConnections = 25; //beyond this no migration
-	public static int groupSize = 50; //could make this a distribution
+	public static int groupSize_optimal = 50; //could make this a distribution
+	public static double avg_birthProb = 0.1; //this right now is manually built into the birth calculations in the group node step method
 
+	
 	//individual nodes
-	public final static int maxAge = 15;  //(could make this more variable)
-	public final static int individualEdges = 2; //(could make this more variable and systematic... centralized or not...)
+	public static final int maxAge_start = 25;  //(could make this more variable)
+	public static NormalDistribution death_dist = new NormalDistribution(25,5);
+	public static final int individualEdges = 2; //(could make this more variable and systematic... centralized or not...)
+	public static double pMigration = 0.1; 	//% per year (distance based)
+	public static double migrationAge = 5;
+	public static final double prob_survival = 0.99; //probability of surviving each step (expected time of death = 1/(1-p). ex: 1/(1-0.96) = 25 )
+	public static double beta_virulence = 0.2;
+	public static double beta_age = 0.00;
+	public static int reproStart = 5;
+	public static int reproEnd = 15;
+	public static double birthProb = 0.5;
+	public static int interBirthPeriod = 2;
 	
 	//Infections characteristics
-	public static double latency = 5; 		//years (could make this a heavy tailed distribution
-	public static double pTrans = 0.2; 		//% per year (could make this a function of delta Age + sex + time since infection
-
-	public static double pMigration = 0.1; 	//% per year (distance based)
-	public static double migrationAge = 4;
+	public static NormalDistribution mutateProb = new NormalDistribution(0,0.1);		//rate of mutation of transmission parameters at each transmission event
 	
-
-	//there seems to be a runtime issue: possibly an infinity loop
 	
+	//start conditions
+	public static final int initialInfectionSize = 50; //this is from one random group
+	public static int groupSize_start = 50; //could make this a distribution
+	public static double rate_start = 2;
+	public static double shape_start = 15;
+	public static double alpha_start = 3;
+
+
 	//Constructor: used to set values from batch runs or the GUI
 	public Params(){
 			//randomSeed = (Integer)RandomHelper.nextIntFromTo(0, 1000000);
 			numberOfGroups = (Integer)p.getValue("numberOfGroups");
-			groupSize = (Integer)p.getValue("groupSize");
+			groupSize_optimal = (Integer)p.getValue("groupSize");
 			landscapeSize = (Integer)p.getValue("landscapeSize");
 			maxRadiusOfConnections = (Integer)p.getValue("maxRadiusOfConnections");
 			pMigration = (Double)p.getValue("dispersalP");
-			pTrans = (Double)p.getValue("pTrans");
+			//pTrans = (Double)p.getValue("pTrans");
 		}
 }

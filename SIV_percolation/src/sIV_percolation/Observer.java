@@ -5,7 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
+
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.space.graph.Network;
 
 public class Observer {
 
@@ -13,6 +20,10 @@ public class Observer {
 	static ArrayList<Double> array_prop_group_Infected;
 	static ArrayList<Double> array_sd_local_Infected;
 	static ArrayList<Double> array_sd_global_Infected;
+	static double[][] array_sd_global_STACF;
+	static int count=0;
+
+
 
 
 	public Observer(){
@@ -20,6 +31,8 @@ public class Observer {
 		array_prop_group_Infected = new ArrayList<Double>();
 		array_sd_local_Infected = new ArrayList<Double>();
 		array_sd_global_Infected = new ArrayList<Double>();
+		count=0;
+		array_sd_global_STACF = new double[Params.recordingDelta][Params.numberOfGroups];
 	}
 
 	/*******************************
@@ -28,13 +41,103 @@ public class Observer {
 
 	public static void step(){
 
+		//get step
+		double step = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		
 		//do every step
-		//noting right now
+		recordGroupInfections(count);
+		count++;
 
 		//do every x steps
-		if(RunEnvironment.getInstance().getCurrentSchedule().getTickCount()%10==0){
+		if(step%Params.recordingDelta==0){
 			record_prop();
-			record_sd();	
+			record_sd();
+			//record_STACF();
+			count=0;
+		}
+	}
+
+	private static void record_STACF(){
+		
+		int[][] asso = getAssociationMatrix();
+		
+		try {
+			RConnection c = new RConnection();
+			
+			try {
+				//Use R to estimate network measures
+				REXP cosineX;
+				//RList l;
+				c.eval("library(igraph)");
+				c.eval("library(starma)");
+				
+				//create graph
+				assignAsRMatrix(c,asso,"asso");
+				c.eval("g.1=graph.adjacency(asso,mode='undirected',weighted=NULL) ");
+				c.eval("g.i=diag()");
+
+				//caculate in R the distance D from the observed distributions
+				//c.assign("offP", asso);
+				//c.assign("motherP", motherArray);
+				c.eval("cosSim <- cosine(offP,motherP)");
+				cosineX = c.eval("cosSim");
+				double cos = cosineX.asDouble();
+				
+
+			} catch (REngineException re){
+				re.printStackTrace();
+				System.out.println("Failed to estimate cosine similarity: Rengine");
+			} catch (REXPMismatchException rm){
+				rm.printStackTrace();
+				System.out.println("Failed to estimate cosine similarity: REXP Mismatch");
+
+			}
+			
+			c.close();
+		} catch (RserveException e) {
+			//TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+	}
+	
+    public static REXP assignAsRMatrix(RConnection c, int[][] sourceArray, String nameToAssignOn) throws REngineException {
+        if (sourceArray.length == 0) {
+            return null;
+        }
+
+        c.assign(nameToAssignOn, sourceArray[0]);
+        REXP resultMatrix = c.eval(nameToAssignOn + " <- matrix( " + nameToAssignOn + " ,nr=1)");
+        for (int i = 1; i < sourceArray.length; i++) {
+            c.assign("temp", sourceArray[i]);
+            resultMatrix = c.eval(nameToAssignOn + " <- rbind(" + nameToAssignOn + ",matrix(temp,nr=1))");
+        }
+
+        return resultMatrix;
+    }
+
+	private static int[][] getAssociationMatrix(){
+
+		ArrayList<GroupNode> nodes = ModelSetup.getAllGroups();
+		Network net = ModelSetup.getGroupNet();
+		int[][] associationM = new int[nodes.size()][nodes.size()];
+
+		for(int i =0; i<nodes.size(); i++){
+			for(int j = 0;j<nodes.size();j++){
+				if(net.isAdjacent(nodes.get(i), nodes.get(j))){
+					associationM[i][j]=1;
+				} else {
+					associationM[i][j]=0;
+				}
+			}
+		}
+		return associationM;
+	}
+
+	private static void recordGroupInfections(int i){
+		for(GroupNode gn : ModelSetup.getAllGroups()){
+			array_sd_global_STACF[i][gn.id] = gn.getGroupStatus();
 		}
 	}
 
@@ -135,12 +238,12 @@ public class Observer {
 			e.printStackTrace();
 		}
 
-		//Transfer the recorded data to the output file
+		//Transfer the recorded data to the output file: measures
 		try {
 
 			//record parameters
-			summaryStats_out.append("latency = ");
-			summaryStats_out.append(((Double)Params.latency).toString());
+			summaryStats_out.append("latencyStart = ");
+			summaryStats_out.append(((Double)Params.rate_start).toString());
 			summaryStats_out.append(", ");
 			summaryStats_out.append("MigrationAge = ");
 			summaryStats_out.append(((Double)Params.migrationAge).toString());
@@ -148,17 +251,14 @@ public class Observer {
 			summaryStats_out.append("pMigration = ");
 			summaryStats_out.append(((Double)Params.pMigration).toString());
 			summaryStats_out.append(", ");
-			summaryStats_out.append("pTrans = ");
-			summaryStats_out.append(((Double)Params.pTrans).toString());
-			summaryStats_out.append(", ");
 			summaryStats_out.append("endTime = ");
 			summaryStats_out.append(((Integer)Params.endTime).toString());
 			summaryStats_out.append(", ");
-			summaryStats_out.append("grouSize = ");
-			summaryStats_out.append(((Integer)Params.groupSize).toString());
+			summaryStats_out.append("OptimalGrouSize = ");
+			summaryStats_out.append(((Integer)Params.groupSize_optimal).toString());
 			summaryStats_out.append(", ");
-			summaryStats_out.append("maxAge = ");
-			summaryStats_out.append(((Integer)Params.maxAge).toString());
+			summaryStats_out.append("ProbSurvival = ");
+			summaryStats_out.append(((Double)Params.prob_survival).toString());
 			summaryStats_out.append(", ");
 			summaryStats_out.append("RadiusConnections = ");
 			summaryStats_out.append(((Integer)Params.maxRadiusOfConnections).toString());
