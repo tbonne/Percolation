@@ -12,7 +12,7 @@ public class Params {
 		//clear up the two model analyses
 	
 	//Set assumpitons:
-		//assuming asymetric network ties: individuals can be connected to someone and the individual not be connected back (could change)
+		//assuming non-directed network ties & individuals can form multiple connections to the same individual
 		//assuming sex is 50/50: random between 0 and 1
 		//assuming migration is independent of group size
 
@@ -39,29 +39,30 @@ public class Params {
 
 	
 	//individual nodes
-	public static final int maxAge_start = 25;  //(could make this more variable)
-	public static NormalDistribution death_dist = new NormalDistribution(25,5);
+	public static NormalDistribution death_dist = new NormalDistribution(45,5);
 	public static final int individualEdges = 2; //(could make this more variable and systematic... centralized or not...)
 	public static double pMigration = 0.1; 	//% per year (distance based)
 	public static double migrationAge = 5;
 	public static final double prob_survival = 0.99; //probability of surviving each step (expected time of death = 1/(1-p). ex: 1/(1-0.96) = 25 )
-	public static double beta_virulence = 0.2;
+	public static double beta_virulence = 0.1;
 	public static double beta_age = 0.00;
 	public static int reproStart = 5;
 	public static int reproEnd = 15;
 	public static double birthProb = 0.5;
 	public static int interBirthPeriod = 2;
 	
+	
 	//Infections characteristics
 	public static NormalDistribution mutateProb = new NormalDistribution(0,0.1);		//rate of mutation of transmission parameters at each transmission event
 	
 	
 	//start conditions
+	public static final int maxAge_start = 25;  // Uniform random between 0 and this number
 	public static final int initialInfectionSize = 50; //this is from one random group
 	public static int groupSize_start = 50; //could make this a distribution
-	public static double rate_start = 2;
-	public static double shape_start = 15;
-	public static double alpha_start = 3;
+	public static double rate_start = 1.0;
+	public static double shape_start = 8.0;
+	public static double alpha_start = 7.0;
 
 
 	//Constructor: used to set values from batch runs or the GUI

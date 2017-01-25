@@ -17,7 +17,7 @@ public class PIV_infection {
 	GammaDistribution gamma;
 	private int t;
 
-	public PIV_infection(double r,double s, double a){
+	public PIV_infection(double r, double s, double a){
 		//latent_time = l;
 		//width_time = w;
 		//center_time = c;

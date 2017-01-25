@@ -40,6 +40,7 @@ public class ModelSetup implements ContextBuilder<Object>{
 	public static ArrayList<IndividualNode> infectIndividuals;
 	public static ArrayList<IndividualNode> migratingIndividuals;
 	static ContinuousSpace <Object > groupSpace;
+	static ContinuousSpace <Object > infectionSpace;
 	static Network<IndividualNode> iNet;
 	static Network<GroupNode> gNet;
 	private static int numGroups ;
@@ -83,6 +84,10 @@ public class ModelSetup implements ContextBuilder<Object>{
 
 		iNet = (Network <IndividualNode >)context.getProjection("individualNetwork");
 		gNet = (Network <GroupNode >)context.getProjection("groupNetwork");
+		
+		//comment out during batch runs (visualize the infection space)
+		//mainContext.addSubContext(new SubContext());)
+		infectionSpace = spaceFactory.createContinuousSpace("infectionSpace", context , new RandomCartesianAdder <Object >(), new repast.simphony.space.continuous.InfiniteBorders<>(), landSize, landSize);
 
 		/****************************************
 		 * 				    			        *
@@ -170,18 +175,23 @@ public class ModelSetup implements ContextBuilder<Object>{
 
 		for(GroupNode nodeStart : allGroups){
 
-			ContinuousWithin<GroupNode> n = new ContinuousWithin(context,nodeStart,Params.maxRadiusOfConnections);
-			Iterable<GroupNode> queryNear = n.query();
+//			ContinuousWithin<GroupNode> n = new ContinuousWithin(context,nodeStart,Params.maxRadiusOfConnections);
+//			Iterable<GroupNode> queryNear = n.query();
+//			ArrayList<GroupNode> nearNodesA = new ArrayList<GroupNode>();
+//
+//			for(Object unk: queryNear){
+//				try{
+//					GroupNode nn = (GroupNode) unk;
+//					nearNodesA.add(nn);
+//
+//				}catch (ClassCastException e){
+//
+//				}
+//			}
+			
 			ArrayList<GroupNode> nearNodesA = new ArrayList<GroupNode>();
-
-			for(Object unk: queryNear){
-				try{
-					GroupNode nn = (GroupNode) unk;
-					nearNodesA.add(nn);
-
-				}catch (ClassCastException e){
-
-				}
+			for(GroupNode gn : allGroups){
+				if(gn.getCoord().distance(nodeStart.getCoord())<=Params.maxRadiusOfConnections)nearNodesA.add(gn);
 			}
 
 			for(GroupNode no : nearNodesA){
@@ -298,6 +308,9 @@ public class ModelSetup implements ContextBuilder<Object>{
 		for(GroupNode gn:allGroups){
 			gn.step();
 		}
+		
+		//remove all individual edges
+		iNet.removeEdges();
 	}
 
 
@@ -320,12 +333,12 @@ public class ModelSetup implements ContextBuilder<Object>{
 				if(source.getStatus()==1){
 					double pTrans = source.PIV.getTransProb(); 
 					if(RandomHelper.nextDouble()<pTrans){
-						target.infect(source.PIV.getRate(), source.PIV.getShape(), source.PIV.getAlpha());
+						if(target.getPIV()==null)target.infect(source.PIV.getRate(), source.PIV.getShape(), source.PIV.getAlpha());
 					}
 				} else {
 					double pTrans = target.PIV.getTransProb(); 
 					if(RandomHelper.nextDouble()<pTrans){
-						source.infect(target.PIV.getRate(), target.PIV.getShape(),target.PIV.getAlpha());
+						if(source.getPIV()==null)source.infect(target.PIV.getRate(), target.PIV.getShape(),target.PIV.getAlpha());
 					}
 				}
 			}
@@ -395,13 +408,18 @@ public class ModelSetup implements ContextBuilder<Object>{
 		for(IndividualNode nn : individualsToRemove){
 			removeEdges(nn);
 			nn.myGroup.getIndividualNodes().remove(nn);
+			try{
+				mainContext.remove(nn.getPIV()); 
+			}catch(NullPointerException ee){
+				//nothing
+			}
 			mainContext.remove(nn);
 			allIndividuals.remove(nn);
 		}
 		individualsToRemove.clear();
 	}
 
-	private static void removeEdges(IndividualNode n){
+	public static void removeEdges(IndividualNode n){
 		Iterable<RepastEdge<IndividualNode>> listOfEdges = iNet.getEdges(n);
 		ArrayList<RepastEdge<IndividualNode>> al = new ArrayList<RepastEdge<IndividualNode>>();
 		for(RepastEdge<IndividualNode> ee : listOfEdges){
@@ -454,6 +472,15 @@ public class ModelSetup implements ContextBuilder<Object>{
 
 	public static synchronized ArrayList<IndividualNode> getIndividualsToAdd() {
 		return individualsToAdd;
+	}
+	
+	public static ContinuousSpace getInfectionSpace(){
+		return infectionSpace;
+	}
+
+
+	public static Context getContext() {
+		return mainContext;
 	}
 
 }

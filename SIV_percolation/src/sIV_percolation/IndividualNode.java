@@ -15,6 +15,7 @@ import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
+import repast.simphony.util.ContextUtils;
 
 import com.sun.media.sound.ModelDestination;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -40,6 +41,17 @@ public class IndividualNode {
 		PIV=null;
 	}
 
+	public IndividualNode(Network<IndividualNode> iNet, GroupNode group, boolean born) {
+		age=0;
+		sex = RandomHelper.nextIntFromTo(0, 1);
+		//this.mySpace=space;
+		this.myNet = iNet;
+		myGroup=group;
+		iStatus=0;
+		maxAge = (int)Params.death_dist.sample();
+		birthCount=Params.interBirthPeriod;
+		PIV=null;
+	}
 
 	public void step(){
 		
@@ -48,6 +60,7 @@ public class IndividualNode {
 		//aging
 		age++;
 		if (age<maxAge){
+			socialMech();
 			infectionStep();
 			birth();
 			migrationStep();
@@ -59,11 +72,19 @@ public class IndividualNode {
 
 	/*****************************************methods**************************************************/
 
+	//The behaviour that determines possible transmission routes between individuals within a group
+	private void socialMech(){
+		SAN_randomXTies(Params.individualEdges);
+		//SAN_outDegree_sex(Params.individualEdges);
+		//SAN_outDegree_sex_age(Params.individualEdges);
+		//SAN_outDegree_sex_age_inDegree(Params.individualEdges);
+	}
 
 	private void infectionStep(){
 
 		//step infection time
 		if(this.iStatus==1)PIV.stepT();
+		//if(this.iStatus==0)infect(Params.rate_start,Params.shape_start,Params.alpha_start);
 		
 		//determine death from infection
 		if(this.getStatus()==1){
@@ -82,7 +103,7 @@ public class IndividualNode {
 			double ran = RandomHelper.nextDouble();
 			if(ran<prob_birth){
 				//add new individual to the group
-				ModelSetup.getIndividualsToAdd().add(new IndividualNode(this.myNet,this.myGroup));
+				ModelSetup.getIndividualsToAdd().add(new IndividualNode(this.myNet,this.myGroup, true));
 				birthCount=0;
 			}
 			}else{
@@ -124,8 +145,33 @@ public class IndividualNode {
 		if(newS<=0)newS=0.001;
 
 		PIV = new PIV_infection(newR,newS,newA);
+		ModelSetup.getContext().add(PIV);
+		ModelSetup.getInfectionSpace().moveTo(PIV,100*newR,100*newS);
 
 	}
+	
+	/*****************************************Stochastic actor based models of tie formation**************************************************/
+	
+	//simple random model starting from sexual maturity
+	private void SAN_randomXTies(int ties){
+		
+		ModelSetup.removeEdges(this);
+		
+		if (this.age>Params.reproStart){
+			int count=0;
+			for(IndividualNode nn: this.getMyGroup().myIndividuals){
+				if(nn!=this && nn.getAge()>Params.reproStart){
+					IndividualEdge edge = new IndividualEdge(this,nn,false,1);
+					ContextUtils.getContext(this).add(edge);
+					myNet.addEdge(edge);
+					count++;
+				}
+				if(count>=ties)break;
+			}
+		}
+		
+	}
+	
 
 	/*****************************************get/set methods**************************************************/
 
@@ -138,6 +184,13 @@ public class IndividualNode {
 	public void setMyGroup(GroupNode myG){
 		myGroup = myG;
 	}
+	public int getAge(){
+		return age;
+	}
+	public PIV_infection getPIV(){
+		return PIV;
+	}
+	
 
 
 }

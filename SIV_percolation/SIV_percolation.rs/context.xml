@@ -1,4 +1,5 @@
 <context id="SIV_percolation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context">
+  	<projection type="continuous space" id="infectionSpace"/>
   	<projection type="continuous space" id="groupSpace"/>
   	<projection type="continuous space" id="individualSpace"/>
   	<projection type="network" id="groupNetwork"/> 

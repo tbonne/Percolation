@@ -1,6 +1,7 @@
 package sIV_percolation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -45,9 +46,10 @@ public class GroupNode {
 		}
 		size=myIndividuals.size();
 		
-		
 		//probBirth = 1/(1+9*Math.exp(-1*(Params.groupSize_optimal-this.size)*0.1)); //at optimal group size the birth rate is 0.1
-		probBirth = 1/(1+Math.exp(-1*(Params.groupSize_optimal-this.size)/10)); 
+		probBirth = 0.1 + (0.1/(1+Math.exp(-0.1*(Params.groupSize_optimal-this.size)))); //this works as a dampening effect to maintain population stability...
+		
+		Collections.shuffle(myIndividuals);
 	}
 
 
